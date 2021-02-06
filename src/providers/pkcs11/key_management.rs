@@ -117,7 +117,7 @@ impl Provider {
         }
         let key_id = self.create_key_id(key_triple.clone(), key_attributes)?;
 
-        let modulus_bits = key_attributes.bits as u64;
+        let modulus_bits = key_attributes.bits as pkcs11::types::CK_ULONG;
         let (mech, mut pub_template, mut priv_template, mut allowed_mechanism) =
             utils::parsec_to_pkcs11_params(key_attributes, &key_id, &modulus_bits)?;
 
@@ -248,7 +248,8 @@ impl Provider {
         // ulValueLen.
         let mut allowed_mechanisms_attribute =
             CK_ATTRIBUTE::new(pkcs11::types::CKA_ALLOWED_MECHANISMS);
-        allowed_mechanisms_attribute.ulValueLen = mem::size_of_val(&allowed_mechanisms) as u64;
+        allowed_mechanisms_attribute.ulValueLen =
+            mem::size_of_val(&allowed_mechanisms) as pkcs11::types::CK_ULONG;
         allowed_mechanisms_attribute.pValue = &allowed_mechanisms
             as *const pkcs11::types::CK_MECHANISM_TYPE
             as pkcs11::types::CK_VOID_PTR;

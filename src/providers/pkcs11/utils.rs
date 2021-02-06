@@ -48,7 +48,7 @@ impl From<CkMechanismType> for CK_MECHANISM_TYPE {
 pub fn mech_type_to_allowed_mech_attribute(mech_type: &mut CK_MECHANISM_TYPE) -> CK_ATTRIBUTE {
     let param: CK_MECHANISM_TYPE_PTR = mech_type;
     let mut allowed_mechanisms_attr = CK_ATTRIBUTE::new(CKA_ALLOWED_MECHANISMS);
-    allowed_mechanisms_attr.ulValueLen = ::std::mem::size_of::<CK_MECHANISM_TYPE>() as u64;
+    allowed_mechanisms_attr.ulValueLen = ::std::mem::size_of::<CK_MECHANISM_TYPE>() as CK_ULONG;
     allowed_mechanisms_attr.pValue = param as CK_VOID_PTR;
     allowed_mechanisms_attr
 }
@@ -85,7 +85,7 @@ impl CkRsaPkcsPssParams {
         CK_RSA_PKCS_PSS_PARAMS {
             hashAlg: self.hash_alg.into(),
             mgf: self.mgf.into(),
-            sLen: self.s_len as u64,
+            sLen: self.s_len as CK_ULONG,
         }
     }
 }
@@ -109,7 +109,7 @@ impl CkRsaPkcsOaepParams {
             } else {
                 self.source_data.as_mut_ptr() as CK_VOID_PTR
             },
-            ulSourceDataLen: self.source_data.len() as u64,
+            ulSourceDataLen: self.source_data.len() as CK_ULONG,
         }
     }
 }
@@ -245,7 +245,7 @@ impl CkMechanism {
                     CK_MECHANISM {
                         mechanism: self.mech_type().into(),
                         pParameter: p_params as CK_VOID_PTR,
-                        ulParameterLen: len as u64,
+                        ulParameterLen: len as CK_ULONG,
                     },
                     Some(CParams::CkmRsaPkcsPssParams(params)),
                 )
@@ -264,7 +264,7 @@ impl CkMechanism {
                     CK_MECHANISM {
                         mechanism: self.mech_type().into(),
                         pParameter: p_params as CK_VOID_PTR,
-                        ulParameterLen: len as u64,
+                        ulParameterLen: len as CK_ULONG,
                     },
                     Some(CParams::CkmRsaPkcsOaepParams(params)),
                 )
@@ -539,7 +539,7 @@ impl Drop for Session<'_> {
 pub fn parsec_to_pkcs11_params(
     attributes: Attributes,
     key_id: &[u8],
-    modulus_bits: &u64,
+    modulus_bits: &CK_ULONG,
 ) -> Result<(
     CK_MECHANISM,
     Vec<CK_ATTRIBUTE>,
